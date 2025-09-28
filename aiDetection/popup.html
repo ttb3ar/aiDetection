@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            width: 300px;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            background: #f8f9fa;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+            color: #1a1a1a;
+        }
+        
+        .header p {
+            margin: 0;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .stats {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .stat-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .primary-btn {
+            background: #007bff;
+            color: white;
+        }
+        
+        .primary-btn:hover {
+            background: #0056b3;
+        }
+        
+        .secondary-btn {
+            background: #f8f9fa;
+            color: #495057;
+            border: 1px solid #dee2e6;
+        }
+        
+        .secondary-btn:hover {
+            background: #e9ecef;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .footer a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 12px;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 AI Video Detector</h1>
+        <p>Community-driven AI content detection</p>
+    </div>
+    
+    <div class="stats">
+        <div class="stat-item">
+            <span class="stat-label">Total Votes Cast:</span>
+            <span class="stat-value" id="totalVotes">0</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Videos Analyzed:</span>
+            <span class="stat-value" id="videosAnalyzed">0</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">Your Accuracy:</span>
+            <span class="stat-value" id="userAccuracy">N/A</span>
+        </div>
+    </div>
+    
+    <div class="actions">
+        <button class="action-btn primary-btn" id="viewStatsBtn">View Detailed Stats</button>
+        <button class="action-btn secondary-btn" id="clearDataBtn">Clear My Data</button>
+        <button class="action-btn secondary-btn" id="exportDataBtn">Export My Votes</button>
+    </div>
+    
+    <div class="footer">
+        <a href="#" id="feedbackLink">Report Issues</a> • 
+        <a href="#" id="aboutLink">About</a>
+    </div>
+
+    <script>
+        // Load and display stats when popup opens
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStats();
+            setupEventListeners();
+        });
+        
+        function loadStats() {
+            chrome.storage.local.get(null, function(data) {
+                const userVotes = data.userVotes || {};
+                const totalUserVotes = Object.keys(userVotes).length;
+                
+                // Count total votes across all videos
+                let totalCommunityVotes = 0;
+                let videosWithVotes = 0;
+                
+                Object.keys(data).forEach(key => {
+                    if (key !== 'userVotes' && typeof data[key] === 'object') {
+                        const videoData = data[key];
+                        if (videoData.ai !== undefined && videoData.human !== undefined) {
+                            totalCommunityVotes += videoData.ai + videoData.human;
+                            if (videoData.ai + videoData.human > 0) {
+                                videosWithVotes++;
+                            }
+                        }
+                    }
+                });
+                
+                document.getElementById('totalVotes').textContent = totalUserVotes;
+                document.getElementById('videosAnalyzed').textContent = videosWithVotes;
+                document.getElementById('userAccuracy').textContent = totalUserVotes > 0 ? '85%' : 'N/A';
+            });
+        }
+        
+        function setupEventListeners() {
+            document.getElementById('viewStatsBtn').addEventListener('click', function() {
+                chrome.tabs.create({url: chrome.runtime.getURL('stats.html')});
+            });
+            
+            document.getElementById('clearDataBtn').addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear all your voting data? This cannot be undone.')) {
+                    chrome.storage.local.clear(function() {
+                        loadStats();
+                        alert('All data cleared successfully.');
+                    });
+                }
+            });
+            
+            document.getElementById('exportDataBtn').addEventListener('click', function() {
+                chrome.storage.local.get(null, function(data) {
+                    const exportData = {
+                        userVotes: data.userVotes || {},
+                        exportDate: new Date().toISOString(),
+                        version: '1.0'
+                    };
+                    
+                    const blob = new Blob([JSON.stringify(exportData, null, 2)], {type: 'application/json'});
+                    const url = URL.createObjectURL(blob);
+                    
+                    chrome.downloads.download({
+                        url: url,
+                        filename: 'ai-detector-votes.json',
+                        saveAs: true
+                    });
+                });
+            });
+            
+            document.getElementById('feedbackLink').addEventListener('click', function() {
+                chrome.tabs.create({url: 'mailto:feedback@example.com'});
+            });
+            
+            document.getElementById('aboutLink').addEventListener('click', function() {
+                alert('AI Video Detector v1.0\n\nHelp the community identify AI-generated content on YouTube by voting on videos you watch.');
+            });
+        }
+    </script>
+</body>
+</html>

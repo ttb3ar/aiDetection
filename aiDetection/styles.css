@@ -1,0 +1,215 @@
+/* YouTube AI Video Detector Styles */
+
+.ai-detector-panel {
+    background: #f8f9fa;
+    border: 1px solid #e1e5e9;
+    border-radius: 12px;
+    margin: 16px 0;
+    padding: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.ai-detector-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.ai-detector-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.vote-count {
+    font-size: 12px;
+    color: #666;
+    background: #e9ecef;
+    padding: 4px 8px;
+    border-radius: 12px;
+}
+
+.vote-display {
+    margin-bottom: 16px;
+}
+
+.vote-bar {
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    margin-bottom: 8px;
+}
+
+.ai-bar {
+    background: linear-gradient(135deg, #ff6b6b, #ff5252);
+    transition: width 0.3s ease;
+}
+
+.human-bar {
+    background: linear-gradient(135deg, #4ecdc4, #26a69a);
+    transition: width 0.3s ease;
+}
+
+.vote-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+}
+
+.ai-label {
+    color: #ff5252;
+}
+
+.human-label {
+    color: #26a69a;
+}
+
+.voting-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.vote-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.ai-btn {
+    color: #ff5252;
+    border-color: #ff5252;
+}
+
+.ai-btn:hover {
+    background: #ff5252;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.human-btn {
+    color: #26a69a;
+    border-color: #26a69a;
+}
+
+.human-btn:hover {
+    background: #26a69a;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.vote-btn.voted {
+    transform: scale(0.95);
+    opacity: 0.8;
+}
+
+.ai-btn.voted {
+    background: #ff5252;
+    color: white;
+}
+
+.human-btn.voted {
+    background: #26a69a;
+    color: white;
+}
+
+.user-vote-status {
+    text-align: center;
+    font-size: 12px;
+    min-height: 18px;
+}
+
+.user-voted {
+    color: #26a69a;
+    font-weight: 500;
+}
+
+.not-voted {
+    color: #666;
+    font-style: italic;
+}
+
+.vote-success {
+    color: #26a69a;
+    font-weight: 500;
+    animation: fadeIn 0.3s ease;
+}
+
+.vote-error {
+    color: #ff5252;
+    font-weight: 500;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Dark theme support for YouTube */
+@media (prefers-color-scheme: dark) {
+    .ai-detector-panel {
+        background: #212121;
+        border-color: #404040;
+        color: #e0e0e0;
+    }
+    
+    .ai-detector-header h3 {
+        color: #e0e0e0;
+    }
+    
+    .vote-count {
+        background: #404040;
+        color: #b0b0b0;
+    }
+    
+    .vote-bar {
+        background: #404040;
+    }
+    
+    .vote-btn {
+        background: #2a2a2a;
+        color: inherit;
+    }
+}
+
+/* YouTube dark theme override */
+html[dark] .ai-detector-panel,
+[dark] .ai-detector-panel {
+    background: #212121;
+    border-color: #404040;
+    color: #e0e0e0;
+}
+
+html[dark] .ai-detector-header h3,
+[dark] .ai-detector-header h3 {
+    color: #e0e0e0;
+}
+
+html[dark] .vote-count,
+[dark] .vote-count {
+    background: #404040;
+    color: #b0b0b0;
+}
+
+html[dark] .vote-bar,
+[dark] .vote-bar {
+    background: #404040;
+}
+
+html[dark] .vote-btn,
+[dark] .vote-btn {
+    background: #2a2a2a;
+}
